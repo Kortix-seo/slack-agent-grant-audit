@@ -33,6 +33,8 @@ Kortix decides a connector call in this order, and the tool follows the same ord
 
 `approvals.ttl` sets the wait: an integer with `m`, `h` or `d`, clamped to 5 minutes through 30 days, and 24 hours when the key is absent or malformed. The tool prints the same value it resolves, so a reviewer sees how long a message sits unanswered.
 
+The four blocks this order reads — the agent grant, `policies`, the connector entry and `policy.default_mode` — are the same four a change-request review of a Slack agent has to catch; [the kortix.yaml behind a Slack agent](https://agentsinslack.com/kortix-yaml-slack-agent) walks through them as they sit in one file, with the audit's output beside each.
+
 ## Use it
 
 ```bash
@@ -64,6 +66,8 @@ The effect of a call (`read`, `write`, `destructive`) is not in the manifest. On
 ## Why a Slack agent specifically
 
 A Slack thread is where the approval has to happen. Kortix posts a card in the thread for a held call, and the person who started the session or a project manager answers it there. If a call you thought was held is actually allowed, nobody sees a card and nobody notices. Run the audit on the calls a bot will make, not on the calls you hope it makes.
+
+It is also the question that separates the three products a team is usually choosing between. A Slackbot, an Agentforce agent and a Slack agent on a runtime the company runs all answer in the same channel; they differ in where the work runs and in who holds the file the audit reads. [Slack agent vs Slackbot vs Agentforce](https://agentsinslack.com/slack-agent-vs-slackbot-vs-agentforce) puts the three side by side on exactly those points.
 
 ## Background
 
