@@ -57,6 +57,41 @@ Exit codes: `0` every call resolved and decided; `1` at least one call is undeci
 
 The effect of a call (`read`, `write`, `destructive`) is not in the manifest. Only the connector knows it, and under `default_mode: risk` the effect is the whole decision. That is why you declare it: an unknown effect is reported as undecided rather than guessed.
 
+## Example: the calls a Slack channel agent makes
+
+Seven calls drawn from what an agent installed in a Slack channel actually does:
+reply in a thread, search messages, search and send mail, open a tracker issue,
+merge a pull request, and write to a CRM the project never declared. Save them
+one to a line in `batch.txt`.
+
+```
+kortix_slack.post_message=write
+kortix_slack.search_messages=read
+gmail.search_threads=read
+gmail.send_email=write {"to": "customer@example.com"}
+linear.create_issue=write
+github.merge_pr=write
+salesforce.update_record=write
+```
+
+```
+$ python audit.py examples/slack-project/kortix.yaml --calls batch.txt --channel slack
+call                          effect  decision          decided by
+kortix_slack.post_message     write   require_approval  policy.default_mode risk: a write call needs approval (4h)
+kortix_slack.search_messages  read    allow             policy.default_mode risk: a read runs
+gmail.search_threads          read    allow             project rule #2 gmail.search_* -> always_run
+gmail.send_email              write   block             project rule #1 gmail.send_email -> block
+linear.create_issue           write   require_approval  connector linear is sensitive: unmatched calls need approval (4h)
+github.merge_pr               write   require_approval  connector github rule #2 * -> require_approval (4h)
+salesforce.update_record      write   block             connector salesforce is not declared in kortix.yaml
+```
+
+The last line is the one to read first. `salesforce.update_record` is blocked
+because the salesforce connector is not declared in the manifest at all: the
+agent's grant is resolved before any policy, so a connector the project never
+handed the agent cannot be reached, whatever a rule says about it. That is a
+different guarantee from a rule that stops a call. The surface was never open.
+
 ## Where it does not reach
 
 - It reads one manifest file. It does not follow `imports`, so a project that splits agents or triggers into other YAML files needs those read separately. `kortix validate` is still the gate for the file itself; it checks the schema and not `policy` or `policies`, which is exactly the gap this tool fills.
