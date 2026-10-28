@@ -69,6 +69,8 @@ A Slack thread is where the approval has to happen. Kortix posts a card in the t
 
 It is also the question that separates the three products a team is usually choosing between. A Slackbot, an Agentforce agent and a Slack agent on a runtime the company runs all answer in the same channel; they differ in where the work runs and in who holds the file the audit reads. [Slack agent vs Slackbot vs Agentforce](https://agentsinslack.com/slack-agent-vs-slackbot-vs-agentforce) puts the three side by side on exactly those points.
 
+Slack now ships its own room for that work: a code channel per task, kept as a record once the work lands. [Slack Code vs a Slack agent](https://agentsinslack.com/slack-code-vs-slack-agent) reads the two records against each other: what the channel keeps, and where the file that decides which tool calls run unattended actually lives.
+
 ## Background
 
 Kortix is an open-source AI Operating System: your agents, their skills, your company memory, and every connector in one git repo you own, with the agents working on real cloud computers. Slack is one of its channels: a message in a thread starts a session, the agent works on its own cloud computer, and the answer comes back in the same thread.
